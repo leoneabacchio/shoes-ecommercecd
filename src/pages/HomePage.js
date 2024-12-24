@@ -39,13 +39,14 @@ const HomePage = ({ searchQuery, addToCart, products }) => {
                 <p className="text-2xl font-semibold text-yellow-500">${product.price}</p>
               </CardContent>
               <CardFooter className="px-6 pb-6 pt-2 flex gap-4">
-                <button
-                  onClick={() => addToCart(product)}
-                  className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold
-                           hover:bg-blue-600 transition-all duration-200 text-center"
-                >
-                  Add to Cart
-                </button>
+                <Link to={`/product/${product.id}`}>
+                  <button
+                    className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold
+                              hover:bg-blue-600 transition-all duration-200 text-center"
+                  >
+                          Buy it Now !
+                        </button>
+                  </Link>
               </CardFooter>
             </Card>
           );

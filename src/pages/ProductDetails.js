@@ -33,7 +33,9 @@ const ProductDetails = ({ addToCart }) => {
           const firstVariant = data.variants[0];
           setSelectedColor(firstVariant.color);
           setCurrentImage(firstVariant.image);
-          const defaultSize = firstVariant.sizes.split(',')[0].trim();
+          // Handle both comma-separated strings and single size values
+          const sizes = String(firstVariant.sizes).split(',').map(size => size.trim());
+          const defaultSize = sizes[0];
           setSelectedSize(defaultSize);
           setFormData((prev) => ({ ...prev, size: defaultSize }));
         }
@@ -49,7 +51,9 @@ const ProductDetails = ({ addToCart }) => {
     const selectedVariant = product.variants.find(variant => variant.color === color);
     if (selectedVariant) {
       setCurrentImage(selectedVariant.image);
-      const defaultSize = selectedVariant.sizes.split(',')[0].trim();
+      // Handle both comma-separated strings and single size values
+      const sizes = String(selectedVariant.sizes).split(',').map(size => size.trim());
+      const defaultSize = sizes[0];
       setSelectedSize(defaultSize);
       setFormData((prev) => ({ ...prev, size: defaultSize }));
     }
@@ -58,6 +62,13 @@ const ProductDetails = ({ addToCart }) => {
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     setFormData((prev) => ({ ...prev, size }));
+  };
+
+  const getCurrentVariantSizes = () => {
+    const currentVariant = product?.variants.find(variant => variant.color === selectedColor);
+    if (!currentVariant) return [];
+    // Handle both comma-separated strings and single size values
+    return String(currentVariant.sizes).split(',').map(size => size.trim());
   };
 
   const handleBuyNow = async (e) => {
@@ -127,28 +138,6 @@ const ProductDetails = ({ addToCart }) => {
               <h1 className="text-3xl font-bold text-white mb-2">{product.name}</h1>
               <p className="text-3xl font-semibold text-yellow-500">${product.price}</p>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-yellow-500/80">Select Size</h3>
-              <div className="flex flex-wrap gap-3">
-                {product.variants
-                  .find(variant => variant.color === selectedColor)
-                  ?.sizes.split(',')
-                  .map(size => size.trim())
-                  .map(size => (
-                    <button
-                      key={size}
-                      onClick={() => handleSizeChange(size)}
-                      className={`px-6 py-3 rounded-lg border transition-all duration-200
-                        ${selectedSize === size
-                          ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500'
-                          : 'border-gray-700 text-gray-300 hover:border-yellow-500/50 hover:bg-yellow-500/5'
-                        }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-              </div>
-            </div>
 
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-yellow-500/80">Select Color</h3>
@@ -164,6 +153,25 @@ const ProductDetails = ({ addToCart }) => {
                       }`}
                   >
                     {variant.color}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-yellow-500/80">Select Size</h3>
+              <div className="flex flex-wrap gap-3">
+                {getCurrentVariantSizes().map(size => (
+                  <button
+                    key={size}
+                    onClick={() => handleSizeChange(size)}
+                    className={`px-6 py-3 rounded-lg border transition-all duration-200
+                      ${selectedSize === size
+                        ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500'
+                        : 'border-gray-700 text-gray-300 hover:border-yellow-500/50 hover:bg-yellow-500/5'
+                      }`}
+                  >
+                    {size}
                   </button>
                 ))}
               </div>
